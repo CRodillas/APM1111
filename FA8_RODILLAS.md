@@ -40,13 +40,12 @@ boxplot(weight ~ group, data = PlantGrowth, main = "Plant Weight by Treatment Gr
 library(ggplot2)
 ```
 
-    ## Warning: package 'ggplot2' was built under R version 4.3.3
+
 
 ``` r
 library(ggdist)
 ```
 
-    ## Warning: package 'ggdist' was built under R version 4.3.3
 
 ``` r
 ggplot(PlantGrowth, aes(x = group, y = weight, fill = group)) +
@@ -81,16 +80,6 @@ ggplot(PlantGrowth, aes(x = group, y = weight, fill = group)) +
 library(dplyr)
 ```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
 
 ``` r
 library(e1071)
@@ -150,18 +139,6 @@ print(normality_results)
 library(car)
 ```
 
-    ## Warning: package 'car' was built under R version 4.3.3
-
-    ## Loading required package: carData
-
-    ## Warning: package 'carData' was built under R version 4.3.3
-
-    ## 
-    ## Attaching package: 'car'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     recode
 
 ``` r
 levene_result <- leveneTest(weight ~ group, data = PlantGrowth)
