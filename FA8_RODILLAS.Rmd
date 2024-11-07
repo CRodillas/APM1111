@@ -1,0 +1,124 @@
+---
+title: "FA 8"
+author: "Rodillas"
+date: "2024-11-07"
+output: html_document
+---
+
+```{r}
+data("PlantGrowth", package = "datasets")
+
+head(PlantGrowth)
+```
+
+```{r}
+aggregate_results <- aggregate(weight ~ group, data = PlantGrowth, FUN = function(x) c(mean = mean(x), sd = sd(x), median = median(x)))
+aggregate_results <- do.call(data.frame, aggregate_results)
+
+colnames(aggregate_results) <- c("group", "mean", "sd", "median")
+print(aggregate_results)
+
+```
+
+
+
+
+
+```{r}
+boxplot(weight ~ group, data = PlantGrowth, main = "Plant Weight by Treatment Group",xlab = "Treatment Group", ylab = "Plant Weight", col = c("dodgerblue", "pink", "green"))
+
+```
+```{r}
+library(ggplot2)
+library(ggdist)
+
+ggplot(PlantGrowth, aes(x = group, y = weight, fill = group)) +
+  ggdist::stat_halfeye(
+    adjust = .5, 
+    width = .6, 
+    justification = -.3, 
+    .width = 0, 
+    point_colour = NA
+  ) +
+  geom_boxplot(
+    width = .15, 
+    outlier.shape = NA,
+    alpha = 0.5
+  ) +
+  geom_jitter(
+    width = .1, 
+    alpha = 0.3
+  ) +
+  scale_fill_manual(values = c("dodgerblue", "pink", "green")) +
+  labs(
+    title = "Raincloud Plot of Plant Weight by Treatment Group",
+    x = "Treatment Group",
+    y = "Plant Weight"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+
+
+```{r}
+library(dplyr)
+library(e1071)
+library(stats)
+
+
+
+descriptive_measures <- PlantGrowth %>%
+  group_by(group) %>%
+  summarise(
+    Valid = n(),
+    Mode = paste(names(sort(table(weight), decreasing = TRUE)[1]), collapse = ", "), 
+    Median = median(weight),
+    Mean = mean(weight),
+    `Std. Deviation` = sd(weight),
+    Variance = var(weight),
+    Skewness = e1071::skewness(weight),
+    `Std. Error of Skewness` = sqrt((6 * Valid * (Valid - 1)) / ((Valid - 2) * (Valid + 1) * (Valid + 3))),
+    Kurtosis = e1071::kurtosis(weight),
+    `Std. Error of Kurtosis` = sqrt(24 / Valid),
+    Minimum = min(weight),
+    Maximum = max(weight),
+    `25th Percentile` = quantile(weight, 0.25),
+    `50th Percentile` = quantile(weight, 0.50),
+    `90th Percentile` = quantile(weight, 0.90)
+  )
+print(descriptive_measures)
+
+```
+
+
+```{r}
+normality_results <- PlantGrowth %>%
+  group_by(group) %>%
+  summarise(
+    Shapiro_Wilk_p = shapiro.test(weight)$p.value
+  )
+print(normality_results)
+```
+```{r}
+library(car)
+
+levene_result <- leveneTest(weight ~ group, data = PlantGrowth)
+
+print(levene_result)
+```
+
+
+
+```{r}
+anova_result <- aov(weight ~ group, data = PlantGrowth)
+summary(anova_result)
+```
+
+
+```{r}
+tukey_result <- TukeyHSD(anova_result)
+print(tukey_result)
+```
