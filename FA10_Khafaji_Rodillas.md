@@ -8,17 +8,6 @@ library(tidyr)
 library(dplyr)
 ```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
 ``` r
 data <- read.csv("E:/Downloads/Cholesterol_R2.csv")
 
@@ -48,8 +37,6 @@ Assumption 4
 ``` r
 library(ggplot2)
 ```
-
-    ## Warning: package 'ggplot2' was built under R version 4.3.3
 
 ``` r
 boxplot(Cholesterol ~ Time, data = long_data, main = "Cholesterol Levels Over Time", xlab = "Time", 
@@ -87,8 +74,6 @@ descriptive_measures <- long_data %>%
   )
 ```
 
-    ## `summarise()` has grouped output by 'Margarine'. You can override using the
-    ## `.groups` argument.
 
 ``` r
 print(descriptive_measures)
@@ -114,8 +99,6 @@ normality_results <- long_data %>%
   summarize(p_value = shapiro.test(Cholesterol)$p.value)
 ```
 
-    ## `summarise()` has grouped output by 'Margarine'. You can override using the
-    ## `.groups` argument.
 
 ``` r
 print(normality_results)
@@ -138,18 +121,6 @@ Assumption 6
 library(car)
 ```
 
-    ## Warning: package 'car' was built under R version 4.3.3
-
-    ## Loading required package: carData
-
-    ## Warning: package 'carData' was built under R version 4.3.3
-
-    ## 
-    ## Attaching package: 'car'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     recode
 
 ``` r
 levene_test_check <- leveneTest(Cholesterol ~ Margarine, data = long_data)
@@ -214,9 +185,6 @@ print(mann_whitney_test_b4)
 mann_whitney_after4weeks <- wilcox.test(Cholesterol ~ Margarine, data = long_data %>% filter(Time == "After4weeks"))
 ```
 
-    ## Warning in wilcox.test.default(x = DATA[[1L]], y = DATA[[2L]], ...): cannot
-    ## compute exact p-value with ties
-
 ``` r
 print("Mann-Whitney U test for 'After4weeks':")
 ```
@@ -256,13 +224,8 @@ print(mann_whitney_after8weeks)
 pairwise.wilcox.test(long_data$Cholesterol, long_data$Time, paired = TRUE, p.adjust.method = "bonferroni")
 ```
 
-    ## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
-    ## exact p-value with ties
 
-    ## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
-    ## exact p-value with ties
 
-    ## 
     ##  Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
     ## 
     ## data:  long_data$Cholesterol and long_data$Time 
