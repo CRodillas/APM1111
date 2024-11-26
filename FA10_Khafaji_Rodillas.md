@@ -8,17 +8,6 @@ library(tidyr)
 library(dplyr)
 ```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
 ``` r
 data <- read.csv("E:/Downloads/Cholesterol_R2.csv")
 
@@ -49,7 +38,6 @@ Assumption 4
 library(ggplot2)
 ```
 
-    ## Warning: package 'ggplot2' was built under R version 4.3.3
 
 ``` r
 boxplot(Cholesterol ~ Time, data = long_data, main = "Cholesterol Levels Over Time", xlab = "Time", 
@@ -87,8 +75,7 @@ descriptive_measures <- long_data %>%
   )
 ```
 
-    ## `summarise()` has grouped output by 'Margarine'. You can override using the
-    ## `.groups` argument.
+
 
 ``` r
 print(descriptive_measures)
@@ -114,9 +101,6 @@ normality_results <- long_data %>%
   summarize(p_value = shapiro.test(Cholesterol)$p.value)
 ```
 
-    ## `summarise()` has grouped output by 'Margarine'. You can override using the
-    ## `.groups` argument.
-
 ``` r
 print(normality_results)
 ```
@@ -137,19 +121,6 @@ Assumption 6
 ``` r
 library(car)
 ```
-
-    ## Warning: package 'car' was built under R version 4.3.3
-
-    ## Loading required package: carData
-
-    ## Warning: package 'carData' was built under R version 4.3.3
-
-    ## 
-    ## Attaching package: 'car'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     recode
 
 ``` r
 levene_test_check <- leveneTest(Cholesterol ~ Margarine, data = long_data)
