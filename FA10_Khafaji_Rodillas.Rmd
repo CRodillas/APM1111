@@ -1,0 +1,99 @@
+---
+title: "FA10_KHAFAJI_RODILLAS"
+author: "Rodillas"
+date: "2024-11-26"
+output: github_document
+---
+
+```{r}
+library(tidyr)
+library(dplyr)
+data <- read.csv("E:/Downloads/Cholesterol_R2.csv")
+
+long_data <- data %>%
+  pivot_longer(cols = c(Before, After4weeks, After8weeks),
+               names_to = "Time",
+               values_to = "Cholesterol")
+
+long_data$Time <- factor(long_data$Time, levels = c("Before", "After4weeks", "After8weeks"))
+long_data$Margarine <- as.factor(long_data$Margarine)
+
+head(long_data)
+```
+
+Assumption 4
+```{r}
+library(ggplot2)
+boxplot(Cholesterol ~ Time, data = long_data, main = "Cholesterol Levels Over Time", xlab = "Time", 
+        ylab = "Cholesterol Level", col = c("dodgerblue", "pink", "green"), outlier.col = "red")
+```
+There are no significant outliers.
+
+Assumption 5
+```{r}
+library(dplyr)
+library(e1071)
+library(stats)
+
+descriptive_measures <- long_data %>%
+  group_by(Margarine, Time) %>%
+  summarise(
+    Valid = n(),
+    Mode = paste(names(sort(table(Cholesterol), decreasing = TRUE)[1]), collapse = ", "), 
+    Median = median(Cholesterol),
+    Mean = mean(Cholesterol),
+    `Std. Deviation` = sd(Cholesterol),
+    Variance = var(Cholesterol),
+    Skewness = e1071::skewness(Cholesterol),
+    `Std. Error of Skewness` = sqrt((6 * Valid * (Valid - 1)) / ((Valid - 2) * (Valid + 1) * (Valid + 3))),
+    Kurtosis = e1071::kurtosis(Cholesterol),
+    `Std. Error of Kurtosis` = sqrt(24 / Valid),
+    Minimum = min(Cholesterol),
+    Maximum = max(Cholesterol),
+    `25th Percentile` = quantile(Cholesterol, 0.25),
+    `50th Percentile` = quantile(Cholesterol, 0.50),
+    `90th Percentile` = quantile(Cholesterol, 0.90)
+  )
+print(descriptive_measures)
+```
+
+```{r}
+normality_results <- long_data %>%
+  group_by(Margarine, Time) %>%
+  summarize(p_value = shapiro.test(Cholesterol)$p.value)
+
+print(normality_results)
+```
+
+
+Assumption 6
+```{r}
+library(car)
+levene_test_check <- leveneTest(Cholesterol ~ Margarine, data = long_data)
+print(levene_test_check)
+```
+
+
+
+Since the p-value (<0.05), there was no homogeneity of variances of the dependent variable for all physical activity groups, as assessed by Levene’s test of homogeneity of variances, p = 0.00208.
+
+```{r}
+ggplot(long_data, aes(x = Margarine, y = Cholesterol, fill = Margarine)) + geom_boxplot() + facet_wrap(~ Time) + theme_minimal() + 
+  labs(title = "Cholesterol Levels by Margarine and Time", y = "Cholesterol")
+```
+
+
+Because the assumption of a parametric test has been violated due to unequal variances, we tried non-parametric approaches such as Friedman's Test for Within-Subjects Factors to test whether there are significant differences between the given time conditions, with this case, before, and after 4 and 8 weeks.
+```{r}
+friedman_test_result <- friedman.test(Cholesterol ~ Time | ID, data = long_data)
+print(friedman_test_result)
+```
+```{r}
+ggplot(long_data, aes(x = Time, y = Cholesterol, group = ID, color = Margarine)) +geom_line() + theme_minimal() + 
+  labs(title = "Cholesterol Levels Over Time", y = "Cholesterol")
+```
+
+```{r}
+mann_whitney_test <- wilcox.test(Cholesterol ~ Margarine, data = long_data %>% filter(Time == "Before"))
+print(mann_whitney_test)
+```
